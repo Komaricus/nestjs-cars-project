@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { of, Observable, delay } from 'rxjs';
 import { Car } from 'src/models/car';
-import { cars } from './cars';
+import { cars } from '../mocks/cars';
 
 @Injectable()
 export class CarsService {

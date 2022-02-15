@@ -6,4 +6,5 @@ export interface Car {
   model: Model;
   color: string;
   year: number;
+  image: string;
 }
