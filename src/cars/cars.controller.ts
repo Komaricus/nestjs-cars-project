@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -12,7 +13,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { NotFoundInterceptor } from 'src/interceptors';
 import { Car } from 'src/models/car';
 import { CarsService } from './cars.service';
-import { GetCarQuery, CreateCarDto } from './dto';
+import { GetCarQuery, CreateCarDto, UpdateCarDto } from './dto';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
@@ -67,6 +68,40 @@ export class CarsController {
 
     return new Promise((resolve) => {
       this.carsService.create(body, file.filename).subscribe((data) => {
+        resolve(data);
+      });
+    });
+  }
+
+  @Put()
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './public',
+        filename: function (req, file, cb) {
+          const filetypes = /jpeg|jpg|png|gif/;
+          const ext = filetypes.test(extname(file.originalname).toLowerCase());
+          const mimetype = filetypes.test(file.mimetype);
+
+          if (mimetype && ext) {
+            return cb(null, uuidv4() + extname(file.originalname));
+          } else {
+            cb('Only images allowed.');
+          }
+        },
+      }),
+    }),
+  )
+  @UseInterceptors(NotFoundInterceptor)
+  updateOne(@UploadedFile() file, @Body() body: UpdateCarDto): Promise<Car> {
+    const modelIds = models.map((model) => model.id);
+    if (!modelIds.includes(body.modelId))
+      throw new BadRequestException('Model ID not exists.');
+
+    if (!file) throw new BadRequestException('Image required.');
+
+    return new Promise((resolve) => {
+      this.carsService.update(body, file.filename).subscribe((data) => {
         resolve(data);
       });
     });

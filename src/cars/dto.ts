@@ -22,3 +22,9 @@ export class CreateCarDto {
   @Type(() => Number)
   year: number;
 }
+
+export class UpdateCarDto extends CreateCarDto {
+  @IsInt()
+  @Type(() => Number)
+  id: number;
+}

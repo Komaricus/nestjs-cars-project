@@ -4,7 +4,7 @@ import { models } from 'src/mocks/models';
 import { Car } from 'src/models/car';
 import { Model } from 'src/models/model';
 import { cars } from '../mocks/cars';
-import { CreateCarDto } from './dto';
+import { CreateCarDto, UpdateCarDto } from './dto';
 
 @Injectable()
 export class CarsService {
@@ -36,6 +36,26 @@ export class CarsService {
 
     setTimeout(() => {
       this.cars.push(car);
+    }, this.responseDelay);
+
+    return of(car).pipe(delay(this.responseDelay));
+  }
+
+  update(body: UpdateCarDto, filename: string): Observable<Car> {
+    const carIndex = this.cars.findIndex((car) => car.id === body.id);
+    if (carIndex === -1) return of(undefined).pipe(delay(this.responseDelay));
+
+    const car = {
+      id: body.id,
+      name: body.name,
+      model: this.models.find((model) => model.id === body.modelId),
+      color: body.color,
+      year: body.year,
+      image: filename,
+    };
+
+    setTimeout(() => {
+      this.cars[carIndex] = car;
     }, this.responseDelay);
 
     return of(car).pipe(delay(this.responseDelay));
