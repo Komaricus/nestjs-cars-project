@@ -28,3 +28,9 @@ export class UpdateCarDto extends CreateCarDto {
   @Type(() => Number)
   id: number;
 }
+
+export class DeleteCarQuery {
+  @IsInt()
+  @Type(() => Number)
+  id: number;
+}

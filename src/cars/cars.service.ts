@@ -60,4 +60,15 @@ export class CarsService {
 
     return of(car).pipe(delay(this.responseDelay));
   }
+
+  delete(id: number): Observable<string> {
+    const carIndex = this.cars.findIndex((car) => car.id === id);
+    if (carIndex === -1) return of(undefined).pipe(delay(this.responseDelay));
+
+    setTimeout(() => {
+      this.cars.splice(carIndex, 1);
+    }, this.responseDelay);
+
+    return of('deleted').pipe(delay(this.responseDelay));
+  }
 }

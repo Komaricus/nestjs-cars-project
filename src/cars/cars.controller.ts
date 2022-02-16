@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -13,7 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { NotFoundInterceptor } from 'src/interceptors';
 import { Car } from 'src/models/car';
 import { CarsService } from './cars.service';
-import { GetCarQuery, CreateCarDto, UpdateCarDto } from './dto';
+import { GetCarQuery, CreateCarDto, UpdateCarDto, DeleteCarQuery } from './dto';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
@@ -102,6 +103,16 @@ export class CarsController {
 
     return new Promise((resolve) => {
       this.carsService.update(body, file.filename).subscribe((data) => {
+        resolve(data);
+      });
+    });
+  }
+
+  @Delete(':id')
+  @UseInterceptors(NotFoundInterceptor)
+  deleteOne(@Param() params: DeleteCarQuery): Promise<string> {
+    return new Promise((resolve) => {
+      this.carsService.delete(params.id).subscribe((data) => {
         resolve(data);
       });
     });
