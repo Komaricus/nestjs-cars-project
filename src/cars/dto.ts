@@ -7,6 +7,10 @@ export class GetCarQuery {
   id: number;
 }
 
+export class SearchCarsQuery {
+  q: string;
+}
+
 export class CreateCarDto {
   @IsString()
   name: string;

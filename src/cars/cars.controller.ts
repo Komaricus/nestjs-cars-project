@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -14,7 +15,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { NotFoundInterceptor } from 'src/interceptors';
 import { Car } from 'src/models/car';
 import { CarsService } from './cars.service';
-import { GetCarQuery, CreateCarDto, UpdateCarDto, DeleteCarQuery } from './dto';
+import {
+  GetCarQuery,
+  CreateCarDto,
+  UpdateCarDto,
+  DeleteCarQuery,
+  SearchCarsQuery,
+} from './dto';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
@@ -25,9 +32,11 @@ export class CarsController {
   constructor(private carsService: CarsService) {}
 
   @Get()
-  findAll(): Promise<Car[]> {
+  findAll(@Query() params: SearchCarsQuery): Promise<Car[]> {
+    console.log(params);
+
     return new Promise((resolve) => {
-      this.carsService.getAll().subscribe((data) => resolve(data));
+      this.carsService.getAll(params.q).subscribe((data) => resolve(data));
     });
   }
 

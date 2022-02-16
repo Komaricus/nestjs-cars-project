@@ -13,8 +13,14 @@ export class CarsService {
   models: Model[] = models;
   lastId = 6;
 
-  getAll(): Observable<Car[]> {
-    return of(this.cars).pipe(delay(this.responseDelay));
+  getAll(search: string): Observable<Car[]> {
+    if (!search) return of(this.cars).pipe(delay(this.responseDelay / 2));
+
+    return of(
+      this.cars.filter((car) =>
+        car.name.toLowerCase().startsWith(search.toLowerCase()),
+      ),
+    ).pipe(delay(this.responseDelay / 2));
   }
 
   getById(id: number): Observable<Car> {
