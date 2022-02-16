@@ -3,7 +3,7 @@ import { of, Observable, delay } from 'rxjs';
 import { models } from 'src/mocks/models';
 import { Car } from 'src/models/car';
 import { Model } from 'src/models/model';
-import { cars } from '../mocks/cars';
+import { cars } from '../../mocks/cars';
 import { CreateCarDto, UpdateCarDto } from './dto';
 
 @Injectable()

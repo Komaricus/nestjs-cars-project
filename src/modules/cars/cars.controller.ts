@@ -33,8 +33,6 @@ export class CarsController {
 
   @Get()
   findAll(@Query() params: SearchCarsQuery): Promise<Car[]> {
-    console.log(params);
-
     return new Promise((resolve) => {
       this.carsService.getAll(params.q).subscribe((data) => resolve(data));
     });
