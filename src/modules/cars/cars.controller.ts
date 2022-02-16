@@ -21,17 +21,35 @@ import {
   UpdateCarDto,
   DeleteCarQuery,
   SearchCarsQuery,
+  NotFoundResponse,
+  CreateCarRequest,
+  UpdateCarRequest,
+  BadRequestResponse,
 } from './dto';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
 import { models } from 'src/mocks/models';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('cars')
+@ApiTags('Cars')
 export class CarsController {
   constructor(private carsService: CarsService) {}
 
   @Get()
+  @ApiOkResponse({
+    type: Car,
+    isArray: true,
+  })
   findAll(@Query() params: SearchCarsQuery): Promise<Car[]> {
     return new Promise((resolve) => {
       this.carsService.getAll(params.q).subscribe((data) => resolve(data));
@@ -39,6 +57,12 @@ export class CarsController {
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    type: Car,
+  })
+  @ApiNotFoundResponse({
+    type: NotFoundResponse,
+  })
   @UseInterceptors(NotFoundInterceptor)
   findOne(@Param() params: GetCarQuery): Promise<Car> {
     return new Promise((resolve) => {
@@ -49,6 +73,16 @@ export class CarsController {
   }
 
   @Post()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: CreateCarRequest,
+  })
+  @ApiCreatedResponse({
+    type: Car,
+  })
+  @ApiBadRequestResponse({
+    type: BadRequestResponse,
+  })
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
@@ -82,6 +116,19 @@ export class CarsController {
   }
 
   @Put()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: UpdateCarRequest,
+  })
+  @ApiOkResponse({
+    type: Car,
+  })
+  @ApiBadRequestResponse({
+    type: BadRequestResponse,
+  })
+  @ApiNotFoundResponse({
+    type: NotFoundResponse,
+  })
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
@@ -116,6 +163,13 @@ export class CarsController {
   }
 
   @Delete(':id')
+  @ApiOkResponse({
+    type: String,
+    description: 'deleted',
+  })
+  @ApiNotFoundResponse({
+    type: NotFoundResponse,
+  })
   @UseInterceptors(NotFoundInterceptor)
   deleteOne(@Param() params: DeleteCarQuery): Promise<string> {
     return new Promise((resolve) => {
